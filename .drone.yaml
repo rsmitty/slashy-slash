@@ -1,0 +1,29 @@
+---
+kind: pipeline
+name: default
+
+steps:
+- name: check-ok-to-test
+  image: autonomy/build-container:latest
+  pull: always
+  commands:
+    - |
+      curl --request GET "https://api.github.com/repos/$DRONE_REPO/issues/$DRONE_PULL_REQUEST" \
+      | jq -e '.labels[]|select(.name == "ok-to-test")'
+
+- name: basic-integration
+  image: autonomy/build-container:latest
+  pull: always
+  commands:
+    - echo "this one always runs"
+
+---
+kind: pipeline
+name: e2e
+
+steps:
+- name: e2e
+  image: autonomy/build-container:latest
+  pull: always
+  commands:
+    - echo "super comprehensive e2e test"
